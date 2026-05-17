@@ -1,18 +1,25 @@
 {
 	"compiler": {
-		"version": "0.8.34+commit.80d5c536"
+		"version": "0.8.35+commit.47b9dedd"
 	},
 	"language": "Solidity",
 	"output": {
 		"abi": [
 			{
 				"inputs": [],
-				"name": "ourString",
+				"name": "deposit",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getBalance",
 				"outputs": [
 					{
-						"internalType": "string",
+						"internalType": "uint256",
 						"name": "",
-						"type": "string"
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -32,7 +39,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/SmartContractWallet.sol": "MyContract"
+			"contracts/SmartContractWallet.sol": "Consumer"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
@@ -47,11 +54,11 @@
 	},
 	"sources": {
 		"contracts/SmartContractWallet.sol": {
-			"keccak256": "0x50249a57684946225b47b51c14090eecc595dd03881db9ed35f475e3a755f89a",
+			"keccak256": "0x6c67df3aaf5c741f7814eddf22dbf91cf78e3a9d4f7936754e5c8cd0dc9d74ff",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://dfb9a34d40533f8f1b18737f896d9cb36fdd49ca5925e19a6fa2a4bfa586fbc1",
-				"dweb:/ipfs/QmekpPpsCKhpqHo3Z12tAcizzMahF4S5ycMMqG7hbRAo5Z"
+				"bzz-raw://6641b8198e740f02d624a12f72d463f2fee9796d66f00d5cfca0af7df5222d6d",
+				"dweb:/ipfs/QmVXm5n8pC53fvgGSLpjQZa4na3vHTwJugvZpRwYFvsfBc"
 			]
 		}
 	},

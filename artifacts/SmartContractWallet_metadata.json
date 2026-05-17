@@ -11,6 +11,38 @@
 				"type": "constructor"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "allowance",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "confirmationsFromGuardiansForReset",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "getBalance",
 				"outputs": [
@@ -18,6 +50,44 @@
 						"internalType": "uint256",
 						"name": "",
 						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "guardians",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "isAllowedToSend",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -34,6 +104,55 @@
 					}
 				],
 				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address payable",
+						"name": "_newOwner",
+						"type": "address"
+					}
+				],
+				"name": "proposeNewOwner",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_for",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_amount",
+						"type": "uint256"
+					}
+				],
+				"name": "setAllowance",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_guardian",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "_isGuardian",
+						"type": "bool"
+					}
+				],
+				"name": "setGuardian",
+				"outputs": [],
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -98,11 +217,11 @@
 	},
 	"sources": {
 		"contracts/SmartContractWallet.sol": {
-			"keccak256": "0xa4294871b3c4a702280b0c519597180b2cedc12f8c7083ea30feb509813fbd9a",
+			"keccak256": "0x6c67df3aaf5c741f7814eddf22dbf91cf78e3a9d4f7936754e5c8cd0dc9d74ff",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f416d060ace7ed50835687b6d58d7d36cdf06a157eb07081e4023d7d1d366eb0",
-				"dweb:/ipfs/QmdusBVkj3x4eMnYse1sLvHNmK2UsnZh95ePZFAXxkbFiw"
+				"bzz-raw://6641b8198e740f02d624a12f72d463f2fee9796d66f00d5cfca0af7df5222d6d",
+				"dweb:/ipfs/QmVXm5n8pC53fvgGSLpjQZa4na3vHTwJugvZpRwYFvsfBc"
 			]
 		}
 	},
