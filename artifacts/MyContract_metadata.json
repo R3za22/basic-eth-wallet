@@ -1,0 +1,59 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "ourString",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/SmartContractWallet.sol": "MyContract"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/SmartContractWallet.sol": {
+			"keccak256": "0x50249a57684946225b47b51c14090eecc595dd03881db9ed35f475e3a755f89a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://dfb9a34d40533f8f1b18737f896d9cb36fdd49ca5925e19a6fa2a4bfa586fbc1",
+				"dweb:/ipfs/QmekpPpsCKhpqHo3Z12tAcizzMahF4S5ycMMqG7hbRAo5Z"
+			]
+		}
+	},
+	"version": 1
+}
