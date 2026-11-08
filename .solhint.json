@@ -1,0 +1,28 @@
+{
+  "extends": "solhint:recommended",
+  "rules": {
+    "compiler-version": [
+      "error",
+      "0.8.35"
+    ],
+    "func-visibility": [
+      "error",
+      {
+        "ignoreConstructors": true
+      }
+    ],
+    "no-empty-blocks": "off",
+    "gas-custom-errors": "error",
+    "reason-string": "off",
+    "use-natspec": "off",
+    "gas-increment-by-one": "off",
+    "gas-strict-inequalities": "off",
+    "gas-small-strings": "off",
+    "gas-indexed-events": "off",
+    "gas-length-in-loops": "off",
+    "imports-on-top": "off",
+    "no-global-import": "off",
+    "named-parameters-mapping": "off",
+    "one-contract-per-file": "off"
+  }
+}
