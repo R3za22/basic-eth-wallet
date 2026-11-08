@@ -1,0 +1,69 @@
+{
+  "_doc": "Shared by the Solidity tests (basic-eth-wallet) and the in-browser TS port (ShahContract/demo). Actors: owner,g1,g2,g3,g4,alice,bob,newOwner,newOwner2. Amounts are plain integers (wei).",
+  "scenarios": [
+    { "name": "allowance spend", "steps": [
+        { "as": "owner", "call": "fund", "args": [100] },
+        { "as": "owner", "call": "setAllowance", "args": ["alice", 30] },
+        { "as": "alice", "call": "transfer", "args": ["bob", 20] },
+        { "as": "alice", "call": "transfer", "args": ["bob", 20], "revert": "more than you are allowed" } ],
+      "expect": { "owner": "owner", "balance": 80, "allowance": { "alice": 10 } } },
+    { "name": "stranger cannot send", "steps": [
+        { "as": "owner", "call": "fund", "args": [100] },
+        { "as": "bob", "call": "transfer", "args": ["bob", 1], "revert": "not allowed to send" } ],
+      "expect": { "owner": "owner", "balance": 100 } },
+    { "name": "owner sends freely", "steps": [
+        { "as": "owner", "call": "fund", "args": [100] },
+        { "as": "owner", "call": "transfer", "args": ["alice", 50] } ],
+      "expect": { "balance": 50 } },
+    { "name": "owner cannot overspend balance", "steps": [
+        { "as": "owner", "call": "fund", "args": [100] },
+        { "as": "owner", "call": "transfer", "args": ["alice", 500], "revert": "transfer failed" } ],
+      "expect": { "balance": 100 } },
+    { "name": "only owner sets allowance", "steps": [
+        { "as": "alice", "call": "setAllowance", "args": ["alice", 5], "revert": "not the owner" } ],
+      "expect": { "allowance": { "alice": 0 } } },
+    { "name": "zero allowance revokes", "steps": [
+        { "as": "owner", "call": "fund", "args": [10] },
+        { "as": "owner", "call": "setAllowance", "args": ["alice", 5] },
+        { "as": "owner", "call": "setAllowance", "args": ["alice", 0] },
+        { "as": "alice", "call": "transfer", "args": ["bob", 1], "revert": "not allowed to send" } ],
+      "expect": { "balance": 10 } },
+    { "name": "three guardians recover ownership", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g2", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g3", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g2", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g3", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "owner", "call": "setAllowance", "args": ["alice", 1], "revert": "not the owner" },
+        { "as": "newOwner", "call": "setAllowance", "args": ["alice", 1] } ],
+      "expect": { "owner": "newOwner", "allowance": { "alice": 1 } } },
+    { "name": "two guardians are not enough", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g2", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g2", "call": "proposeNewOwner", "args": ["newOwner"] } ],
+      "expect": { "owner": "owner" } },
+    { "name": "guardian cannot vote twice", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"], "revert": "already Voted" } ],
+      "expect": { "owner": "owner" } },
+    { "name": "non guardian cannot propose", "steps": [
+        { "as": "alice", "call": "proposeNewOwner", "args": ["alice"], "revert": "not a guardian" } ],
+      "expect": { "owner": "owner" } },
+    { "name": "switching candidate resets the count", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g2", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g3", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g2", "call": "proposeNewOwner", "args": ["newOwner2"] },
+        { "as": "g3", "call": "proposeNewOwner", "args": ["newOwner2"] } ],
+      "expect": { "owner": "owner" } },
+    { "name": "removed guardian cannot propose", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g4", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g4", false] },
+        { "as": "g4", "call": "proposeNewOwner", "args": ["g4"], "revert": "not a guardian" } ],
+      "expect": { "owner": "owner" } }
+  ]
+}

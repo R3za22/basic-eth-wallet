@@ -43,3 +43,14 @@ A minimal multi-signature style Ethereum smart contract wallet with guardian-bas
 # Deploy with Remix or Hardhat
 Contract: SmartContractWallet
 Network: Any EVM-compatible chain
+
+## Tests
+
+```bash
+npm install
+npm test   # Hardhat 3 + mocha, solc 0.8.35
+```
+
+`parity/wallet-scenarios.json` holds shared scenarios. The same file is run against the
+TypeScript port used by the in-browser demo in R3za22/ShahContract, so the demo and the
+Solidity contract stay in agreement.
