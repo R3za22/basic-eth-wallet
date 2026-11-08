@@ -1,0 +1,127 @@
+{
+  "_doc": "Shared by the Solidity tests (basic-eth-wallet) and the in-browser TS port (ShahContract/demo). Actors: owner,g1,g2,g3,g4,alice,bob,newOwner,newOwner2. Amounts are plain integers (wei). `threshold` defaults to 2. `revert` is the custom error name.",
+  "scenarios": [
+    { "name": "allowance spend", "steps": [
+        { "as": "owner", "call": "fund", "args": [100] },
+        { "as": "owner", "call": "setAllowance", "args": ["alice", 30] },
+        { "as": "alice", "call": "transfer", "args": ["bob", 20] },
+        { "as": "alice", "call": "transfer", "args": ["bob", 20], "revert": "ExceedsAllowance" } ],
+      "expect": { "owner": "owner", "balance": 80, "allowance": { "alice": 10 } } },
+    { "name": "stranger cannot send", "steps": [
+        { "as": "owner", "call": "fund", "args": [100] },
+        { "as": "bob", "call": "transfer", "args": ["bob", 1], "revert": "NotAllowed" } ],
+      "expect": { "owner": "owner", "balance": 100 } },
+    { "name": "owner sends freely", "steps": [
+        { "as": "owner", "call": "fund", "args": [100] },
+        { "as": "owner", "call": "transfer", "args": ["alice", 50] } ],
+      "expect": { "balance": 50 } },
+    { "name": "owner cannot overspend balance", "steps": [
+        { "as": "owner", "call": "fund", "args": [100] },
+        { "as": "owner", "call": "transfer", "args": ["alice", 500], "revert": "TransferFailed" } ],
+      "expect": { "balance": 100 } },
+    { "name": "failed spender transfer keeps the allowance", "steps": [
+        { "as": "owner", "call": "fund", "args": [5] },
+        { "as": "owner", "call": "setAllowance", "args": ["alice", 50] },
+        { "as": "alice", "call": "transfer", "args": ["bob", 10], "revert": "TransferFailed" } ],
+      "expect": { "balance": 5, "allowance": { "alice": 50 } } },
+    { "name": "only owner sets allowance", "steps": [
+        { "as": "alice", "call": "setAllowance", "args": ["alice", 5], "revert": "NotOwner" } ],
+      "expect": { "allowance": { "alice": 0 } } },
+    { "name": "zero allowance revokes", "steps": [
+        { "as": "owner", "call": "fund", "args": [10] },
+        { "as": "owner", "call": "setAllowance", "args": ["alice", 5] },
+        { "as": "owner", "call": "setAllowance", "args": ["alice", 0] },
+        { "as": "alice", "call": "transfer", "args": ["bob", 1], "revert": "NotAllowed" } ],
+      "expect": { "balance": 10 } },
+    { "name": "two of three guardians recover ownership", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g2", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g3", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g2", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "owner", "call": "setAllowance", "args": ["alice", 1], "revert": "NotOwner" },
+        { "as": "newOwner", "call": "setAllowance", "args": ["alice", 1] } ],
+      "expect": { "owner": "newOwner", "allowance": { "alice": 1 }, "votes": 0, "proposed": null } },
+    { "name": "one guardian is not enough", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g2", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] } ],
+      "expect": { "owner": "owner", "votes": 1, "proposed": "newOwner" } },
+    { "name": "guardian cannot vote twice", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"], "revert": "AlreadyVoted" } ],
+      "expect": { "owner": "owner", "votes": 1 } },
+    { "name": "non guardian cannot propose", "steps": [
+        { "as": "alice", "call": "proposeNewOwner", "args": ["alice"], "revert": "NotGuardian" } ],
+      "expect": { "owner": "owner" } },
+    { "name": "switching candidate resets the count", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g2", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g3", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g2", "call": "proposeNewOwner", "args": ["newOwner2"] } ],
+      "expect": { "owner": "owner", "votes": 1, "proposed": "newOwner2" } },
+    { "name": "a guardian can vote for a candidate again after a competing proposal", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g2", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g3", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g2", "call": "proposeNewOwner", "args": ["newOwner2"] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g2", "call": "proposeNewOwner", "args": ["newOwner"] } ],
+      "expect": { "owner": "newOwner" } },
+    { "name": "owner cancels and approvals are cleared", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g2", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "owner", "call": "cancelRecovery", "args": [] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g2", "call": "proposeNewOwner", "args": ["newOwner"] } ],
+      "expect": { "owner": "newOwner" } },
+    { "name": "cancel leaves no votes behind", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "owner", "call": "cancelRecovery", "args": [] } ],
+      "expect": { "owner": "owner", "votes": 0, "proposed": null } },
+    { "name": "only the owner can cancel", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "g1", "call": "cancelRecovery", "args": [], "revert": "NotOwner" } ],
+      "expect": { "votes": 1 } },
+    { "name": "cancel without a proposal reverts", "steps": [
+        { "as": "owner", "call": "cancelRecovery", "args": [], "revert": "NoRecovery" } ],
+      "expect": {} },
+    { "name": "removed guardian approval no longer counts", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g2", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g3", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] },
+        { "as": "owner", "call": "setGuardian", "args": ["g1", false] },
+        { "as": "g2", "call": "proposeNewOwner", "args": ["newOwner"] } ],
+      "expect": { "owner": "owner", "votes": 1 } },
+    { "name": "zero address cannot become owner", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["zero"], "revert": "InvalidNewOwner" } ],
+      "expect": { "owner": "owner", "votes": 0 } },
+    { "name": "current owner cannot be proposed", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["owner"], "revert": "InvalidNewOwner" } ],
+      "expect": { "owner": "owner" } },
+    { "name": "a guardian cannot be proposed", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setGuardian", "args": ["g2", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["g2"], "revert": "InvalidNewOwner" } ],
+      "expect": { "owner": "owner" } },
+    { "name": "threshold of one lets a single guardian recover", "threshold": 1, "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "g1", "call": "proposeNewOwner", "args": ["newOwner"] } ],
+      "expect": { "owner": "newOwner" } },
+    { "name": "threshold must fit the guardian count", "steps": [
+        { "as": "owner", "call": "setGuardian", "args": ["g1", true] },
+        { "as": "owner", "call": "setThreshold", "args": [2], "revert": "InvalidThreshold" },
+        { "as": "owner", "call": "setThreshold", "args": [0], "revert": "InvalidThreshold" },
+        { "as": "owner", "call": "setThreshold", "args": [1] } ],
+      "expect": { "threshold": 1 } }
+  ]
+}

@@ -1,0 +1,8 @@
+node_modules
+hh-artifacts
+hh-cache
+cache
+.idea
+types
+.env
+.env.*
